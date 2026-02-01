@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Trajectory — Stage 2</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand">
+          <div class="brand__mark">
+            <img id="appIcon" src="./build/icon.png" alt="Trajectory" onerror="this.style.display='none'" />
+            <span class="brand__fallback">T</span>
+          </div>
+          <div>
+            <div class="brand__name">Trajectory</div>
+            <div class="brand__tag" id="weekLabel">Week</div>
+          </div>
+        </div>
+
+        <div class="topbar__nav">
+          <!-- Page-specific week/month nav moved into each page; header kept minimal -->
+
+          <div class="divider"></div>
+
+          <button class="btn btn--ghost" id="tabHome" type="button" aria-pressed="false">Home</button>
+          <button class="btn btn--ghost" id="tabWeek" type="button" aria-pressed="true">Week</button>
+          <button class="btn btn--ghost" id="tabMonth" type="button" aria-pressed="false">Month</button>
+          <button class="btn btn--ghost" id="tabPlan" type="button" aria-pressed="false">Plan</button>
+          <button class="btn btn--ghost" id="tabStats" type="button" aria-pressed="false">Stats</button>
+
+          <div class="divider"></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input id="quickAddInput" class="input" type="search" placeholder="Quick Add (title)" style="width:220px;padding:8px 10px;height:36px;" />
+            <button class="btn btn--ghost" id="btnQuickAdd" type="button" title="Quick add to Inbox">Quick Add</button>
+            <button class="btn btn--primary" id="btnAddCommitment" type="button">Add to Calendar</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container" id="app" aria-live="polite"></main>
+
+    <!-- Commitment modal -->
+    <div class="modal" id="commitModal" role="dialog" aria-modal="true" aria-labelledby="commitTitle" hidden>
+      <div class="modal__backdrop" data-close="true"></div>
+
+      <div class="modal__panel" role="document">
+        <div class="modal__header">
+          <h2 id="commitTitle">Add Commitment</h2>
+          <button class="iconbtn" type="button" aria-label="Close" data-close="true">✕</button>
+        </div>
+
+        <form id="commitForm" class="modal__body">
+          <label class="field">
+            <span class="field__label">Title</span>
+            <input id="cTitle" class="input" type="text" maxlength="80" placeholder="UART mini-project" required />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Deliverable (required)</span>
+            <input id="cDeliverable" class="input" type="text" maxlength="80" placeholder="Repo + 2-page writeup" required />
+          </label>
+
+          <div class="row">
+            <label class="field">
+              <span class="field__label">Estimate (hours)</span>
+              <input id="cHours" class="input" type="number" min="0" step="0.5" value="2" required />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Day</span>
+              <select id="cDay" class="input"></select>
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field__label">Next action (optional)</span>
+            <input id="cNext" class="input" type="text" maxlength="120" placeholder="Outline writeup + create repo" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Target date (optional)</span>
+            <input id="cDate" class="input" type="date" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Time (optional)</span>
+            <input id="cTime" class="input" type="time" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Duration (mins, optional)</span>
+            <input id="cDuration" class="input" type="number" min="1" step="5" placeholder="60" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Repeat</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select id="cRepeatFreq" class="input" style="width:160px">
+                <option value="once">Once</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="custom">Custom</option>
+              </select>
+              <input id="cRepeatInterval" class="input" type="number" min="1" value="1" style="width:80px" />
+              <div style="font-size:12px;color:var(--muted);">every</div>
+            </div>
+          </label>
+
+          <div id="repeatOptions" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <div id="repeatWeeklyOpts" style="display:none;align-items:center;gap:6px">
+              <label><input type="checkbox" value="MO" class="repeat-wd"/>Mon</label>
+              <label><input type="checkbox" value="TU" class="repeat-wd"/>Tue</label>
+              <label><input type="checkbox" value="WE" class="repeat-wd"/>Wed</label>
+              <label><input type="checkbox" value="TH" class="repeat-wd"/>Thu</label>
+              <label><input type="checkbox" value="FR" class="repeat-wd"/>Fri</label>
+              <label><input type="checkbox" value="SA" class="repeat-wd"/>Sat</label>
+              <label><input type="checkbox" value="SU" class="repeat-wd"/>Sun</label>
+            </div>
+            <div id="repeatMonthlyOpts" style="display:none">
+              <label class="field">
+                <span class="field__label">Day of month</span>
+                <input id="cRepeatMonthDay" class="input" type="number" min="1" max="31" value="1" style="width:100px" />
+              </label>
+            </div>
+            <div id="repeatUntilOpt" style="display:none">
+              <label class="field">
+                <span class="field__label">Until (optional)</span>
+                <input id="cRepeatUntil" class="input" type="date" />
+              </label>
+            </div>
+          </div>
+
+          <label class="field">
+            <span class="field__label">Proof URL (optional)</span>
+            <input id="cProof" class="input" type="url" placeholder="https://..." />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Link to long-term goal (optional)</span>
+            <select id="cLinkGoal" class="input">
+              <option value="">(none)</option>
+            </select>
+          </label>
+
+          <div class="modal__footer">
+            <button class="btn btn--ghost" type="button" data-close="true">Cancel</button>
+            <button class="btn btn--primary" type="submit">Save</button>
+          </div>
+        </form>
+
+        <div class="modal__hint">
+          Stage 2: commitments persist locally (localStorage). No accounts yet.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Goal modal -->
+    <div class="modal" id="goalModal" role="dialog" aria-modal="true" aria-labelledby="goalTitle" hidden>
+      <div class="modal__backdrop" data-close="true"></div>
+
+      <div class="modal__panel" role="document">
+        <div class="modal__header">
+          <h2 id="goalTitle">Add Goal</h2>
+          <button class="iconbtn" type="button" aria-label="Close" data-close="true">✕</button>
+        </div>
+
+        <form id="goalForm" class="modal__body">
+          <label class="field">
+            <span class="field__label">Title</span>
+            <input id="gTitle" class="input" type="text" maxlength="120" placeholder="Become fluent in Rust" required />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Category</span>
+            <select id="gCategory" class="input">
+              <option value="">(none)</option>
+              <option value="degree">Degree</option>
+              <option value="career">Career</option>
+              <option value="health">Health</option>
+            </select>
+          </label>
+
+          <!-- Degree-specific fields (shown when Category = Degree) -->
+          <div id="degreeFields" hidden>
+            <label class="field">
+              <span class="field__label">Degree total credits required</span>
+              <input id="gDegreeReq" class="input" type="number" min="0" step="1" value="120" />
+            </label>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:var(--space);">
+              <div class="field__label">Classes</div>
+              <div><button id="gAddClass" class="btn btn--ghost" type="button">+ Add Class</button></div>
+            </div>
+
+            <div id="gClassesList" class="compact-list"></div>
+          </div>
+
+          <!-- Health-specific fields (shown when Category = Health) -->
+          <div id="healthFields" hidden>
+            <label class="field">
+              <span class="field__label">Health Subtype</span>
+              <select id="gHealthSubtype" class="input">
+                <option value="general">General</option>
+                <option value="bulking">Bulking</option>
+                <option value="cutting">Cutting</option>
+                <option value="strength">Strength</option>
+              </select>
+            </label>
+
+            <div class="row">
+              <label class="field">
+                <span class="field__label">Current value</span>
+                <input id="gHealthCurrent" class="input" type="number" step="0.1" />
+              </label>
+
+              <label class="field">
+                <span class="field__label">Target value</span>
+                <input id="gHealthTarget" class="input" type="number" step="0.1" />
+              </label>
+            </div>
+
+            <label class="field">
+              <span class="field__label">Start value (baseline, optional)</span>
+              <input id="gHealthStart" class="input" type="number" step="0.1" />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Unit</span>
+              <select id="gHealthUnit" class="input">
+                <option value="kg">kg</option>
+                <option value="lb">lb</option>
+                <option value="reps">reps</option>
+                <option value="sessions">sessions</option>
+              </select>
+            </label>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:var(--space);">
+              <div class="field__label">Measurements</div>
+              <div><button id="gAddMeasurement" class="btn btn--ghost" type="button">+ Add Measurement</button></div>
+            </div>
+
+            <div id="gHealthMeasurementsList" class="compact-list"></div>
+          </div>
+
+          <label class="field">
+            <span class="field__label">Horizon (years)</span>
+            <input id="gHorizon" class="input" type="number" min="0" step="1" value="1" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Notes (optional)</span>
+            <textarea id="gNotes" class="input" rows="4" placeholder="What success looks like..."></textarea>
+          </label>
+
+          <div class="modal__footer">
+            <button class="btn btn--ghost" type="button" data-close="true">Cancel</button>
+            <button class="btn btn--primary" type="submit">Save Goal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    
+    <!-- Optional: include lottie-web to enable rich coach animations.
+         To activate, uncomment the following script tag. -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script> -->
+    <script src="./app.js"></script>
+  </body>
+</html>
