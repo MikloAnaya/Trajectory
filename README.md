@@ -1,4 +1,4 @@
-# Trajectory — Stage 2 (Electron scaffold)
+# Trajectory
 
 This folder contains an Electron wrapper so you can run the Stage 2 static SPA as a desktop app on Windows.
 
@@ -65,4 +65,5 @@ Notes about signing and SmartScreen
 
 Configuration
 - The project `package.json` includes a `dist` script that runs `electron-builder`. You can customize `build` options (appId, productName, icon path) in `package.json` under a `build` field — see `electron-builder` docs for details.
+
 
