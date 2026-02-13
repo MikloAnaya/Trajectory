@@ -1,0 +1,52 @@
+{
+  "name": "trajectory-stage-2",
+  "version": "0.1.0",
+  "description": "Electron scaffold for Trajectroy Development (Stage 2)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack-win": "npx --yes electron-packager@17.1.0 . TrajectoryApp --platform=win32 --arch=x64 --out=dist --overwrite --asar --asar.unpackDir=browser-extension",
+    "dist": "npx --yes electron-builder@26.4.0 --win",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "clean:all": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true});require('fs').rmSync('.cache',{recursive:true,force:true})\""
+  },
+  "devDependencies": {
+    "electron": "^26.0.0"
+  },
+  
+  "license": "MIT",
+  "build": {
+    "appId": "com.miklo.trajectory",
+    "productName": "Trajectory",
+    "electronLanguages": [
+      "en-US"
+    ],
+    "files": [
+      "**/*",
+      "!dist/**",
+      "!**/*.bak",
+      "!.github/**",
+      "!renderPlanView.txt",
+      "!make-exe.ps1",
+      "!make-exe.bat"
+    ],
+    "asarUnpack": [
+      "browser-extension/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "createDesktopShortcut": "true",
+      "createStartMenuShortcut": "true"
+    }
+  }
+}

@@ -1,0 +1,103 @@
+function renderPlanView(sprint, weekStartDate) {
+  const plannedCount = sprint.commitments.length;
+  const plannedHours = sprint.commitments.reduce((sum, c) => sum + Number(c.hours || 0), 0);
+  const budgetHours = Number(sprint.timeBudgetHours || 40);
+  const budgetPct = Math.round((plannedHours / budgetHours) * 100);
+  
+  let timelineDate = new Date();
+  if (state.planTimelineDate) {
+    timelineDate = new Date(state.planTimelineDate);
+  } else if (state.view === 'plan') {
+    timelineDate = new Date(weekStartDate);
+  }
+  const timelineDateISO = toISO(timelineDate);
+  
+  const commitmentsThisDay = sprint.commitments.filter(c => 
+    c.targetDate && toISO(new Date(c.targetDate)) === timelineDateISO
+  );
+  
+  const timelineBlocksHTML = commitmentsThisDay.map(c => {
+    const startHour = c.timeStartHour || 9;
+    const durationMins = (Number(c.duration) || 60);
+    const topPercent = (startHour / 24) * 100;
+    const heightPercent = (durationMins / 1440) * 100;
+    const statColor = c.stat === 'STR' ? '#FB7185' : c.stat === 'INT' ? '#1F6FEB' : '#F59E0B';
+    
+    return `<div class="timeline__block" style="top:${topPercent}%;height:${heightPercent}%;background:${statColor};" data-commit-id="${escapeHtml(c.id)}" title="${escapeHtml(c.title)} · ${durationMins}min"><div class="timeline__block-label">${escapeHtml(c.title)}</div></div>`;
+  }).join("");
+
+  return `
+    <section class="plan-section">
+      <aside class="plan-sidebar">
+        <div class="card">
+          <div class="card__title">
+            <h2>Plan</h2>
+            <div class="meta">${formatRange(weekStartDate)}</div>
+          </div>
+          <div class="card__body">
+            <label class="field">
+              <span class="field__label">Sprint objective</span>
+              <input class="input" id="inpObjective" type="text" maxlength="120"
+                value="${escapeHtml(sprint.objective)}"
+                placeholder="Ship one artifact + one writeup." />
+            </label>
+
+            <div class="field">
+              <span class="field__label">Time budget (hours)</span>
+              <input class="input" id="inpBudget" type="number" min="0" step="0.5" value="${Number(sprint.timeBudgetHours)}" style="margin-bottom:8px;"/>
+              <div class="bar">
+                <div class="bar__fill" style="width:${Math.min(budgetPct, 100)}%;background:${budgetPct > 100 ? '#FB7185' : 'rgba(45,212,191,.8)'}"></div>
+              </div>
+              <div class="meta" style="margin-top:6px;">${plannedHours.toFixed(1)}h / ${budgetHours}h (${budgetPct}%)</div>
+            </div>
+
+            <div class="field" style="margin-top:var(--space);">
+              <span class="field__label">Commitments used</span>
+              <div class="badge">${plannedCount}/7</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="plan-main">
+        <div class="plan-nav">
+          <button class="smallbtn" id="planPrevDay" type="button">← Prev</button>
+          <input id="planDatePicker" class="input" type="date" value="${timelineDateISO}" style="flex:1;max-width:200px;" />
+          <button class="smallbtn" id="planNextDay" type="button">Next →</button>
+        </div>
+
+        <div class="card" style="margin-top:var(--space);">
+          <div class="card__title">
+            <h2>Day Timeline</h2>
+            <div class="meta">${timelineDate.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'})}</div>
+          </div>
+          <div class="card__body">
+            <div class="timeline">
+              <div class="timeline__hours">
+                ${Array.from({length: 24}, (_, i) => `<div class="timeline__hour" style="height:${100/24}%"><span>${String(i).padStart(2, '0')}:00</span></div>`).join("")}
+              </div>
+              
+              <div class="timeline__grid">
+                ${Array.from({length: 24}, (_, i) => `<div class="timeline__hour-line" style="top:${(i/24)*100}%"></div>`).join("")}
+                <div class="timeline__now-line" id="timelineNowLine"></div>
+                <div class="timeline__blocks">
+                  ${timelineBlocksHTML || '<div class="faint" style="padding:16px;">No commitments scheduled for this day.</div>'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:var(--space);">
+          <div class="card__title">
+            <h2>Calendar</h2>
+            <div class="meta">Weekly view</div>
+          </div>
+          <div class="card__body">
+            ${renderCalendar(sprint, weekStartDate)}
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
