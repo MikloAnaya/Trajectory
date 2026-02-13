@@ -1,5 +1,5 @@
 /**
- * Stage 2:
+ * Trajectory (Beta):
  * - Weekly calendar (Mon–Sun)
  * - Plan sprint objective + time budget
  * - Add commitments to specific days
@@ -9,7 +9,8 @@
  * - Persist locally via localStorage
  */
 
-const STORAGE_KEY = "trajectory_stage2_v2"; // bumped to allow schema additions
+const STORAGE_KEY = "trajectory_v2"; // bumped to allow schema additions
+const LEGACY_STORAGE_KEYS = ["trajectory_stage2_v2", "trajectory_stage2_v1"];
 const SCHEMA_VERSION = 3;
 
 let execFileSafe = null;
@@ -769,30 +770,42 @@ function saveState() {
 
 function loadState() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = localStorage.getItem(STORAGE_KEY);
+    let migratedFrom = "";
+
     if (!raw) {
-      // try older key for migration
-      const old = localStorage.getItem("trajectory_stage2_v1");
-      if (old) {
-        const parsed = JSON.parse(old);
-        // migrate minimal: keep existing sprints and add schemaVersion + longPlans
-        parsed.schemaVersion = parsed.schemaVersion || 1;
-        parsed.longPlans = parsed.longPlans || [];
-        parsed.rituals = parsed.rituals || {};
-        parsed.planMode = parsed.planMode || "day";
-        parsed.schemaVersion = SCHEMA_VERSION;
-        return parsed;
+      for (const legacyKey of LEGACY_STORAGE_KEYS) {
+        const legacy = localStorage.getItem(legacyKey);
+        if (legacy) {
+          raw = legacy;
+          migratedFrom = legacyKey;
+          break;
+        }
       }
-      return null;
     }
+
+    if (!raw) return null;
+
     const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+
     if (!parsed.schemaVersion) parsed.schemaVersion = 1;
     if (!parsed.longPlans) parsed.longPlans = [];
     if (!parsed.rituals) parsed.rituals = {};
     if (!parsed.planMode) parsed.planMode = "day";
+
+    if (migratedFrom) {
+      parsed.schemaVersion = SCHEMA_VERSION;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      } catch (_) {
+        // Ignore write failures (quota, etc.). We'll keep using the legacy key for this session.
+      }
+    }
+
     return parsed;
   } catch (err) {
-    console.error('Failed to load state', err);
+    console.error("Failed to load state", err);
     return null;
   }
 }

@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <strong>Status:</strong> Beta (v0.0.1-beta.1)
+</p>
+
+<p align="center">
   <a href="#features">Features</a> ·
   <a href="#privacy--data">Privacy</a> ·
   <a href="#tech">Tech</a> ·
@@ -57,7 +61,6 @@ Prereqs
 
 Development
 ```powershell
-cd "Stage 2"
 npm install
 npm start
 ```
@@ -65,13 +68,11 @@ npm start
 ## Package (Windows)
 Quick unsigned build (recommended)
 ```powershell
-cd "Stage 2"
 .\make-exe.ps1
 ```
 
 Installer (NSIS via electron-builder)
 ```powershell
-cd "Stage 2"
 npm install
 npm run dist
 ```

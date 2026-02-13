@@ -1,7 +1,7 @@
 {
-  "name": "trajectory-stage-2",
-  "version": "0.1.0",
-  "description": "Electron scaffold for Trajectroy Development (Stage 2)",
+  "name": "trajectory-desktop",
+  "version": "0.0.1-beta.1",
+  "description": "Trajectory desktop app (Electron) - beta",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
