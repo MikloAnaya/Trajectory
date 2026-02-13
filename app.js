@@ -4595,7 +4595,6 @@ function evaluatePornGroupViolation(snapshot, cfgInput = null) {
 }
 
 function evaluateDirectHardViolation(snapshot, { pornOnly = false } = {}) {
-  ensureEnforcementStateShape();
   if (!snapshot) return null;
   const cfg = state.enforcement;
   const processName = normalizeProcessName(snapshot.process);
@@ -4890,6 +4889,7 @@ async function tickHardBlockLoop({ forceRecheck = false } = {}) {
     }
 
     const current = await getForegroundWindowSnapshot();
+    ensureEnforcementStateShape();
     const directHard = evaluateDirectHardViolation(current);
     let unresolved = !!directHard;
     if (!unresolved && hardBlockState.pid && !hardBlockState.isBrowser) {
@@ -5391,7 +5391,6 @@ function resolveViolationStage(strikeCount, violation) {
 }
 
 function evaluateViolation(snapshot, nowTs) {
-  ensureEnforcementStateShape();
   if (!snapshot) return null;
   const cfg = state.enforcement;
   const processName = normalizeProcessName(snapshot.process);
