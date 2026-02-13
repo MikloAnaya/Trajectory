@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Trajectory logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="30%" cy="25%" r="70%">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F59E0B"/>
+      <stop offset="1" stop-color="#EF4444"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#0F172A" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Badge -->
+  <circle cx="256" cy="256" r="236" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="236" fill="url(#shine)"/>
+  <circle cx="256" cy="256" r="236" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="6"/>
+
+  <!-- Trajectory trail -->
+  <path d="M104 356 C 164 330 214 302 252 270 C 290 238 322 200 360 156"
+        fill="none"
+        stroke="#FFFFFF"
+        stroke-opacity="0.55"
+        stroke-width="10"
+        stroke-linecap="round"/>
+  <path d="M104 356 C 164 330 214 302 252 270 C 290 238 322 200 360 156"
+        fill="none"
+        stroke="#FFFFFF"
+        stroke-opacity="0.25"
+        stroke-width="16"
+        stroke-linecap="round"/>
+
+  <!-- Stars -->
+  <circle cx="128" cy="170" r="6" fill="#FFFFFF" fill-opacity="0.65"/>
+  <circle cx="176" cy="128" r="4" fill="#FFFFFF" fill-opacity="0.55"/>
+  <circle cx="396" cy="118" r="5" fill="#FFFFFF" fill-opacity="0.55"/>
+  <circle cx="404" cy="206" r="3" fill="#FFFFFF" fill-opacity="0.45"/>
+
+  <!-- Rocket -->
+  <g transform="translate(356 188) rotate(-26)" filter="url(#shadow)">
+    <!-- body -->
+    <path d="M0 -132 C 70 -78 104 -4 0 156 C -104 -4 -70 -78 0 -132 Z"
+          fill="#FFFFFF" fill-opacity="0.96"/>
+    <!-- highlight -->
+    <path d="M0 -108 C 46 -72 70 -20 0 120 C -70 -20 -46 -72 0 -108 Z"
+          fill="#FFFFFF" fill-opacity="0.18"/>
+
+    <!-- window -->
+    <circle cx="0" cy="-26" r="24" fill="#0F172A" fill-opacity="0.16"/>
+    <circle cx="0" cy="-26" r="14" fill="#FFFFFF" fill-opacity="0.85"/>
+
+    <!-- fins -->
+    <path d="M-52 40 L-126 104 L-24 108 Z" fill="#FFFFFF" fill-opacity="0.92"/>
+    <path d="M52 40 L126 104 L24 108 Z" fill="#FFFFFF" fill-opacity="0.92"/>
+
+    <!-- flame -->
+    <path d="M0 156 C 26 192 22 244 0 270 C -22 244 -26 192 0 156 Z" fill="url(#flame)"/>
+  </g>
+</svg>
+

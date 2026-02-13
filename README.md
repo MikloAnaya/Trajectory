@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/branding/trajectory-logo.svg?raw=1" width="140" alt="Trajectory logo" />
+  <img src="trajectory-logo.svg?raw=1" width="140" alt="Trajectory logo" />
 </p>
 
 <h1 align="center">Trajectory</h1>
