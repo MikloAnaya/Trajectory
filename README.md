@@ -5,7 +5,7 @@
 <h1 align="center">Trajectory</h1>
 
 <p align="center">
-  A local-first Windows desktop app for planning your week, time-blocking your day, and enforcing focus.
+  A desktop app for planning your week, time-blocking your day, and enforcing focus.
 </p>
 
 <p align="center">
