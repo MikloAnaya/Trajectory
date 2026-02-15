@@ -1,20 +1,52 @@
-# Node
-node_modules/
+# Dependencies
+**/node_modules/
+
+# Build outputs
+**/dist/
+**/out/
+**/.cache/
+**/.parcel-cache/
+**/.vite/
+
+# Electron / installer artifacts
+**/TrajectoryApp-win32-x64/
+**/*.exe
+**/*.msi
+**/*.dmg
+**/*.AppImage
+**/*.deb
+**/*.rpm
+**/*.zip
+**/*.7z
+
+# Logs
+**/*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 
-# Electron / build outputs
-dist/
-out/
-.cache/
-*.log
-
-# Electron-packager output (large)
-TrajectoryApp-win32-x64/
-
-# OS noise
+# OS / editor junk
+.DS_Store
 Thumbs.db
 desktop.ini
+**/*.lnk
+**/__pycache__/
+**/.pytest_cache/
+**/*.pyc
+/.venv/
+/.vscode/
+/.claude/
 
+# Local env / secrets
+.env
+.env.*
+/.python-version
+**/*localStorage*.json
+**/*localstorage*.json
+**/storage*.json
+
+# Generated profiles / exports
+trajectory-browser-blocker-profile-*.json
+
+# Misc one-off dev artifacts (keep out of the public repo)
+renderPlanView.txt
